@@ -7,7 +7,7 @@ from datetime import timezone
 from pathlib import Path
 
 import pandas as pd
-import pandera as pa
+import pandera.pandas as pa
 
 from portfolio_ml.utils.dates import now_utc
 from portfolio_ml.utils.logging import get_logger

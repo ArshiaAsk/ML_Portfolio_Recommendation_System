@@ -4,7 +4,7 @@ from datetime import date, datetime, timezone
 
 import pandas as pd
 import pytest
-import pandera as pa
+import pandera.pandas as pa
 
 from portfolio_ml.validation.schemas import (
     RawDailyPricesSchema,

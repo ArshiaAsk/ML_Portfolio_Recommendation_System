@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-import pandera as pa
+import pandera.pandas as pa
 from pandera import Column, DataFrameSchema, Check
 
 
@@ -111,7 +111,7 @@ RawDailyPricesSchema = DataFrameSchema(
         ),
     ],
     name="RawDailyPrices",
-    coerce=False,
+    coerce=True,
 )
 
 
@@ -169,7 +169,7 @@ CleanDailyPricesSchema = DataFrameSchema(
         ),
     },
     name="CleanDailyPrices",
-    coerce=False,
+    coerce=True,
 )
 
 
@@ -199,5 +199,5 @@ AssetDailyFeaturesSchema = DataFrameSchema(
         "created_at": Column(nullable=False),
     },
     name="AssetDailyFeatures",
-    coerce=False,
+    coerce=True,
 )
