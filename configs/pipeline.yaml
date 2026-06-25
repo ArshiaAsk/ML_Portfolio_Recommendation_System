@@ -1,0 +1,9 @@
+pipeline:
+  start_date: "2018-01-01"
+  end_date: null
+  interval: "1d"
+  raw_data_dir: "data/raw"
+  processed_data_dir: "data/processed"
+  marts_data_dir: "data/marts"
+  validation_reports_dir: "data/validation_reports"
+  duckdb_path: "data/portfolio_ml.duckdb"

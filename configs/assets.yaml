@@ -1,0 +1,60 @@
+assets:
+  - symbol: SPY
+    name: S&P 500 ETF
+    asset_class: equity
+    currency: USD
+    source: yfinance
+
+  - symbol: QQQ
+    name: Nasdaq 100 ETF
+    asset_class: equity
+    currency: USD
+    source: yfinance
+
+  - symbol: IWM
+    name: Russell 2000 ETF
+    asset_class: equity
+    currency: USD
+    source: yfinance
+
+  - symbol: EFA
+    name: Developed Markets ex-US ETF
+    asset_class: equity
+    currency: USD
+    source: yfinance
+
+  - symbol: EEM
+    name: Emerging Markets ETF
+    asset_class: equity
+    currency: USD
+    source: yfinance
+
+  - symbol: TLT
+    name: Long-Term Treasury Bond ETF
+    asset_class: bond
+    currency: USD
+    source: yfinance
+
+  - symbol: GLD
+    name: Gold ETF
+    asset_class: commodity
+    currency: USD
+    source: yfinance
+
+  - symbol: VNQ
+    name: Real Estate ETF
+    asset_class: real_estate
+    currency: USD
+    source: yfinance
+
+  - symbol: DBC
+    name: Commodities ETF
+    asset_class: commodity
+    currency: USD
+    source: yfinance
+
+  - symbol: DIA
+    name: Dow Jones Industrial Average ETF
+    asset_class: equity
+    currency: USD
+    source: yfinance
