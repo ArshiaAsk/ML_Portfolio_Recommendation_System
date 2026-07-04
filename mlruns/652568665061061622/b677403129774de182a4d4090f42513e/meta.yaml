@@ -1,0 +1,14 @@
+artifact_uri: file:///home/arshiaask/projects/ML_Portfolio_Recommendation_System/mlruns/652568665061061622/b677403129774de182a4d4090f42513e/artifacts
+end_time: 1783157500736
+entry_point_name: ''
+experiment_id: '652568665061061622'
+lifecycle_stage: active
+run_id: b677403129774de182a4d4090f42513e
+run_name: ridge_5d
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1783157499878
+status: 3
+tags: []
+user_id: arshiaask
