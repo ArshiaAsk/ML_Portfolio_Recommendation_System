@@ -1,9 +1,0 @@
-artifact_location: file:///home/arshiaask/projects/ML_Portfolio_Recommendation_System/mlruns/652568665061061622
-creation_time: 1783157353764
-effective_trace_archival_retention: null
-experiment_id: '652568665061061622'
-last_update_time: 1783157353764
-lifecycle_stage: active
-name: portfolio_ml_phase3
-trace_location: null
-workspace: default

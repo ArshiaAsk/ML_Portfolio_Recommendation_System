@@ -47,3 +47,6 @@ htmlcov/
 
 # Prefect
 .prefect/
+
+# ML 
+mlruns/
