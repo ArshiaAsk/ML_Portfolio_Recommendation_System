@@ -1,0 +1,23 @@
+experiment:
+  experiment_name: "baseline_grid"
+  lookback_windows: [126, 252, 504]
+  rebalance_frequencies: [5, 21, 63]
+  strategies: ["EqualWeight", "RiskParity", "MinVariance"]
+  transaction_cost: 0.0005
+  initial_capital: 1000000.0
+  paths:
+    price_data_dir: "data/processed/daily_prices"
+    output_dir: "outputs/phase3_experiment_grid"
+  backtest:
+    transaction_cost: 0.0005
+    initial_capital: 1000000.0
+    lookback_days: 252
+    window_type: "expanding"
+  ranking:
+    sharpe_weight: 0.5
+    mdd_weight: 0.3
+    turnover_weight: 0.2
+  mlflow:
+    experiment_name: "portfolio_baseline_grid"
+    tracking_uri: null
+    log_artifacts: true
