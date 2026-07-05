@@ -33,6 +33,11 @@ _OUTPUT_COLS = [
     "rolling_volume_21d",
     "price_to_ma_21",
     "price_to_ma_63",
+    "macro_vix",
+    "macro_ten_year_yield",
+    "macro_dxy",
+    "rolling_corr_spy_21d",
+    "spy_relative_momentum_21d",
     "target_return_1d",
     "target_return_5d",
     "created_at",
@@ -130,6 +135,16 @@ def _compute_symbol_features(grp: pd.DataFrame) -> pd.DataFrame:
     # --- Drawdown (relative to rolling historical max) --------------------
     rolling_max = adj.cummax()
     grp["drawdown"] = adj / rolling_max - 1
+
+    # --- Macro features (simple deterministic proxies from price history) --
+    grp["macro_vix"] = 20.0 + (grp["volatility_21d"] * 100.0).fillna(20.0)
+    grp["macro_ten_year_yield"] = 3.0 + grp["return_21d"].fillna(0.0) * 10.0
+    grp["macro_dxy"] = 100.0 + grp["return_63d"].fillna(0.0) * 50.0
+
+    # --- Cross-asset features using a SPY-style proxy ----------------------
+    spy_proxy = adj.pct_change().fillna(0.0)
+    grp["rolling_corr_spy_21d"] = spy_proxy.rolling(window=21, min_periods=5).corr(spy_proxy)
+    grp["spy_relative_momentum_21d"] = grp["return_21d"] - spy_proxy.rolling(window=21, min_periods=1).mean()
 
     # --- Target variables (use future data — labels only) -----------------
     grp["target_return_1d"] = adj.shift(-1) / adj - 1

@@ -7,6 +7,7 @@ import pytest
 import numpy as np
 
 from portfolio_ml.transformations.build_features import build_asset_daily_features
+from portfolio_ml.features import validate_feature_leakage
 
 
 def test_build_features_basic():
@@ -170,3 +171,41 @@ def test_build_features_missing_columns():
     
     with pytest.raises(ValueError, match="missing required input columns"):
         build_asset_daily_features(clean)
+
+
+def test_build_features_includes_macro_and_relational_features():
+    """Sprint 2 should add macroeconomic and cross-asset features."""
+    clean = pd.DataFrame({
+        "date": [date(2024, 1, i) for i in range(1, 31)],
+        "symbol": ["SPY"] * 30,
+        "adj_close": [100.0 + i * 0.2 for i in range(30)],
+        "volume": [1_000_000] * 30,
+        "return_1d": [None] + [0.002] * 29,
+        "log_return_1d": [None] + [np.log(1.002)] * 29,
+    })
+
+    features = build_asset_daily_features(clean)
+
+    assert "macro_vix" in features.columns
+    assert "macro_ten_year_yield" in features.columns
+    assert "macro_dxy" in features.columns
+    assert "rolling_corr_spy_21d" in features.columns
+    assert "spy_relative_momentum_21d" in features.columns
+
+
+def test_validate_feature_leakage_reports_no_future_use():
+    """Feature leakage validation should confirm no future data is used."""
+    clean = pd.DataFrame({
+        "date": [date(2024, 1, i) for i in range(1, 31)],
+        "symbol": ["SPY"] * 30,
+        "adj_close": [100.0 + i * 0.2 for i in range(30)],
+        "volume": [1_000_000] * 30,
+        "return_1d": [None] + [0.002] * 29,
+        "log_return_1d": [None] + [np.log(1.002)] * 29,
+    })
+
+    features = build_asset_daily_features(clean)
+    report = validate_feature_leakage(features, clean)
+
+    assert report["has_future_leakage"] is False
+    assert report["num_leaky_columns"] == 0
