@@ -6,6 +6,9 @@ from portfolio_ml.modeling.baselines import (
     PortfolioStrategy,
     RiskParityStrategy,
 )
+from portfolio_ml.modeling.ml_models import GradientBoostRankModel
+from portfolio_ml.modeling.rank_evaluator import RankEvaluator
+from portfolio_ml.modeling.regimes import RegimeAwareStrategy, RegimeLabeler
 from portfolio_ml.modeling.scalers import (
     TrainOnlyScaler,
     minmax_scaler,
@@ -24,4 +27,8 @@ __all__ = [
     "EqualWeightStrategy",
     "MinVarianceStrategy",
     "RiskParityStrategy",
+    "GradientBoostRankModel",
+    "RankEvaluator",
+    "RegimeLabeler",
+    "RegimeAwareStrategy",
 ]
