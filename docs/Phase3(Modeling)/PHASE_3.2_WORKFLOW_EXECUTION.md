@@ -171,3 +171,29 @@ Verified with:
 pytest -q tests/test_regime_strategy.py
 ```
 Result: 2 passed in 1.09s.
+
+## Sprint 1–4 unified workflow
+
+The project now has a single entry point for the full Phase 3.1 workflow.
+
+### What is included
+- systematic baseline grid experiments
+- regime-aware strategy evaluation
+- a lightweight ML ranking experiment
+- consolidated ranking output in CSV form
+
+### Entry points
+- Python module: src/portfolio_ml/experiments/unified_runner.py
+- CLI script: scripts/run_unified_experiments.py
+
+### How to run
+```bash
+PYTHONPATH=src python scripts/run_unified_experiments.py
+```
+
+### Verification evidence
+Verified with:
+```bash
+pytest -q tests/test_unified_runner.py
+```
+Result: 1 passed in 2.10s.

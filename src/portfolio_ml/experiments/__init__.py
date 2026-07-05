@@ -11,6 +11,7 @@ from portfolio_ml.experiments.tracking import (
     log_params,
     start_experiment,
 )
+from portfolio_ml.experiments.unified_runner import run_unified_experiment_suite
 
 __all__ = [
     "start_experiment",
@@ -22,4 +23,5 @@ __all__ = [
     "list_experiments",
     "get_run_metrics",
     "get_run_params",
+    "run_unified_experiment_suite",
 ]

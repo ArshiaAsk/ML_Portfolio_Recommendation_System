@@ -108,25 +108,35 @@ class WalkForwardSplitter:
         """
         dates_arr = np.asarray(dates)
         n = len(dates_arr)
+        test_window = self.test_window or self.rebalance_freq
 
-        if n < self.lookback_window + (self.test_window or self.rebalance_freq):
+        if n < test_window:
             raise ValueError(
-                f"Not enough periods ({n}) for lookback_window="
-                f"{self.lookback_window} + test_window={self.test_window}."
+                f"Not enough periods ({n}) for even one test window of size {test_window}."
+            )
+
+        effective_lookback = min(self.lookback_window, max(1, n - test_window))
+        if effective_lookback < self.lookback_window:
+            logger.warning(
+                "Requested lookback_window=%d exceeds available history (%d periods); "
+                "using effective lookback=%d.",
+                self.lookback_window,
+                n,
+                effective_lookback,
             )
 
         splits: List[IndexPair] = []
-        test_start = self.lookback_window  # first index that can be in a test set
+        test_start = effective_lookback  # first index that can be in a test set
 
-        while test_start + self.test_window <= n:
-            test_end = test_start + self.test_window  # exclusive
+        while test_start + test_window <= n:
+            test_end = test_start + test_window  # exclusive
 
             if self.window_type == "expanding":
                 train_start = 0
                 train_end = test_start  # exclusive
             else:  # rolling
                 train_end = test_start  # exclusive
-                train_start = max(0, train_end - self.lookback_window)
+                train_start = max(0, train_end - effective_lookback)
 
             train_idx = np.arange(train_start, train_end)
             test_idx = np.arange(test_start, test_end)
@@ -139,7 +149,7 @@ class WalkForwardSplitter:
             "WalkForwardSplitter: %d folds | mode=%s | lookback=%d | rebalance=%d",
             self.n_splits_,
             self.window_type,
-            self.lookback_window,
+            effective_lookback,
             self.rebalance_freq,
         )
         return splits
