@@ -194,11 +194,15 @@ AssetDailyFeaturesSchema = DataFrameSchema(
         "rolling_volume_21d": Column(pa.Float, nullable=True),
         "price_to_ma_21": Column(pa.Float, nullable=True),
         "price_to_ma_63": Column(pa.Float, nullable=True),
-        "macro_vix": Column(pa.Float, nullable=True),
-        "macro_ten_year_yield": Column(pa.Float, nullable=True),
-        "macro_dxy": Column(pa.Float, nullable=True),
-        "rolling_corr_spy_21d": Column(pa.Float, nullable=True),
-        "spy_relative_momentum_21d": Column(pa.Float, nullable=True),
+        # These enrichment columns were added after the original feature
+        # contract. Keep them optional so historical feature partitions and
+        # minimal valid fixtures remain readable; the feature builder still
+        # emits them whenever it has the required inputs.
+        "macro_vix": Column(pa.Float, nullable=True, required=False),
+        "macro_ten_year_yield": Column(pa.Float, nullable=True, required=False),
+        "macro_dxy": Column(pa.Float, nullable=True, required=False),
+        "rolling_corr_spy_21d": Column(pa.Float, nullable=True, required=False),
+        "spy_relative_momentum_21d": Column(pa.Float, nullable=True, required=False),
         "target_return_1d": Column(pa.Float, nullable=True),
         "target_return_5d": Column(pa.Float, nullable=True),
         "created_at": Column(nullable=False),
