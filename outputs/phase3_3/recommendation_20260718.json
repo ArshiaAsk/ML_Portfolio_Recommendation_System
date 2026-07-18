@@ -1,0 +1,71 @@
+{
+  "metadata": {
+    "generation_date": "20260718",
+    "feature_date": "2026-07-02",
+    "model": {
+      "model_name": "gradient_boost",
+      "params": {
+        "learning_rate": 0.03,
+        "max_depth": 6,
+        "max_iter": 300
+      },
+      "portfolio_method": "top_k_equal",
+      "top_k": 5,
+      "max_weight": 0.25,
+      "ic_significant": true
+    },
+    "disclaimer": "Not investment advice."
+  },
+  "recommendation": [
+    {
+      "symbol": "DBC",
+      "score": 0.49184864165224773,
+      "weight": 0.0
+    },
+    {
+      "symbol": "DIA",
+      "score": 0.5809716894839302,
+      "weight": 0.0
+    },
+    {
+      "symbol": "EEM",
+      "score": 0.7649839630240219,
+      "weight": 0.2
+    },
+    {
+      "symbol": "EFA",
+      "score": 0.5599428199335109,
+      "weight": 0.0
+    },
+    {
+      "symbol": "GLD",
+      "score": 0.5967165544878248,
+      "weight": 0.2
+    },
+    {
+      "symbol": "IWM",
+      "score": 0.5389126725002785,
+      "weight": 0.0
+    },
+    {
+      "symbol": "QQQ",
+      "score": 0.6737003330656562,
+      "weight": 0.2
+    },
+    {
+      "symbol": "SPY",
+      "score": 0.6190961077428636,
+      "weight": 0.2
+    },
+    {
+      "symbol": "TLT",
+      "score": 0.631619974890745,
+      "weight": 0.2
+    },
+    {
+      "symbol": "VNQ",
+      "score": 0.5461093077729906,
+      "weight": 0.0
+    }
+  ]
+}

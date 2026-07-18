@@ -1,0 +1,2 @@
+model_name,params,mean_rank_ic,std_rank_ic,pct_positive_folds,significant,p_value,precision_at_3
+gradient_boost,"{""learning_rate"": 0.03, ""max_depth"": 6, ""max_iter"": 300}",0.13107706276245604,0.24330621775757932,0.7191011235955056,True,1.037934697943283e-06,0.3473158551810237

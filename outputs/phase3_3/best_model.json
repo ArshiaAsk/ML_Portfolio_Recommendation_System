@@ -1,0 +1,12 @@
+{
+  "model_name": "gradient_boost",
+  "params": {
+    "learning_rate": 0.03,
+    "max_depth": 6,
+    "max_iter": 300
+  },
+  "portfolio_method": "top_k_equal",
+  "top_k": 5,
+  "max_weight": 0.25,
+  "ic_significant": true
+}
