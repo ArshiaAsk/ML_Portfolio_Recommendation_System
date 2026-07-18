@@ -22,6 +22,8 @@ from portfolio_ml.modeling.two_stage_portfolio import (
     normalise_scores_cross_sectionally,
 )
 from portfolio_ml.modeling.walk_forward import WalkForwardSplitter
+from portfolio_ml.modeling.ranking_pipeline import build_features_and_targets, run_walk_forward_ranking
+from portfolio_ml.modeling.two_stage_pipeline import run_two_stage_walk_forward
 
 __all__ = [
     "WalkForwardSplitter",
@@ -41,4 +43,7 @@ __all__ = [
     "compute_weights_from_scores",
     "normalise_scores_cross_sectionally",
     "compute_turnover",
+    "build_features_and_targets",
+    "run_walk_forward_ranking",
+    "run_two_stage_walk_forward",
 ]
