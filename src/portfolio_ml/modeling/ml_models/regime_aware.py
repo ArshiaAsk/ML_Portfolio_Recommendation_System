@@ -19,17 +19,20 @@ class RegimeAwareRankModel:
 
     def fit(self, X, y):
         labels = self.regime_labels(X)
-        self.global_model = build_model(self.model_name, **self.model_params).fit(X, y)
+        target = pd.Series(np.asarray(y), index=X.index)
+        self.global_model = build_model(self.model_name, **self.model_params).fit(X, target.to_numpy())
         for regime, indexes in labels.groupby(labels).groups.items():
             if len(indexes) >= self.min_training_rows:
-                self.regime_models[regime] = build_model(self.model_name, **self.model_params).fit(X.loc[indexes], np.asarray(y)[indexes])
+                self.regime_models[regime] = build_model(
+                    self.model_name, **self.model_params
+                ).fit(X.loc[indexes], target.loc[indexes].to_numpy())
         return self
 
     def predict(self, X):
         if self.global_model is None: raise RuntimeError("RegimeAwareRankModel must be fitted before predict")
         labels = self.regime_labels(X)
-        output = np.asarray(self.global_model.predict(X), dtype=float)
+        output = pd.Series(self.global_model.predict(X), index=X.index, dtype=float)
         for regime, indexes in labels.groupby(labels).groups.items():
             if regime in self.regime_models:
-                output[np.asarray(list(indexes), dtype=int)] = self.regime_models[regime].predict(X.loc[indexes])
-        return output
+                output.loc[indexes] = self.regime_models[regime].predict(X.loc[indexes])
+        return output.to_numpy()
