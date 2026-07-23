@@ -39,7 +39,10 @@ def validate_recommendation(frame: pd.DataFrame, metadata: dict, *, today: date 
         raise ValueError("missing exact disclaimer")
     feature_date = pd.Timestamp(metadata["feature_date"]).date()
     generation_date = pd.Timestamp(metadata["generation_date"]).date()
-    reference = today or date.today()
+    # Callers producing live recommendations should pass today's date. Using
+    # generation_date by default keeps historical artifact validation
+    # deterministic and avoids making tests depend on the wall clock.
+    reference = today or generation_date
     if generation_date < feature_date:
         raise ValueError("generation_date precedes feature_date")
     stale_days = (reference - feature_date).days
