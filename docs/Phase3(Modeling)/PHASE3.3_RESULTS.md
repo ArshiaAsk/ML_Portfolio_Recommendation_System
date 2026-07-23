@@ -219,3 +219,42 @@ winner remains final and the rejection reason must be recorded in
   risk preferences.
 - The final recommendation is an inference artifact, not evidence of future
   performance.
+
+## Final Holdout Governance Status
+
+The selected strategy passed pre-holdout research selection but failed final
+confirmation. Phase 3.3 is **not completed** and is **not production ready**.
+
+| Status field | Value |
+|---|---|
+| `selected_pre_holdout` | `true` |
+| `holdout_status` | `failed` |
+| `production_ready` | `false` |
+| `final_decision` | `rejected_after_holdout` |
+
+The locked holdout covered `2025-01-02` through `2026-07-22` (`388` trading
+days). After 5 bps transaction costs, the selected score-weighted strategy
+returned `8.36%` annualized with a `0.60` Sharpe, `-15.96%` maximum drawdown,
+and `19.51%` average turnover. EqualWeight returned `22.36%` annualized with
+a `1.70` Sharpe, `-12.83%` maximum drawdown, and `0.26%` average turnover.
+
+Therefore the selected strategy failed on return, Sharpe, drawdown, and
+turnover. Regime-aware routing was directionally better than the plain model
+on the observed holdout metrics, but no paired bootstrap evidence was
+available. It is not sufficient for final acceptance.
+
+The final confirmation artifact is:
+
+```text
+outputs/phase3_3/holdout_confirmation_20260723.json
+```
+
+The governance status artifact is:
+
+```text
+outputs/phase3_3/phase3_3_status_20260723.json
+```
+
+The failed holdout is locked evaluation data. **Do not retune against this
+holdout.** A new dated research run is planned with selection cutoff
+`2025-12-31`; previous artifacts remain preserved as evidence.

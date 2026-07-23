@@ -1,0 +1,61 @@
+{
+  "status": "failed",
+  "decision": "FAIL",
+  "evaluation_type": "untouched_holdout_confirmation",
+  "selection_cutoff": "2024-12-31",
+  "holdout_start": "2025-01-02",
+  "holdout_end": "2026-07-22",
+  "n_holdout_days": 388,
+  "selected_strategy": {
+    "model_name": "gradient_boost",
+    "params": {
+      "learning_rate": 0.03,
+      "max_depth": 6,
+      "max_iter": 300
+    },
+    "regime_status": "regime_aware",
+    "portfolio_method": "score_weighted",
+    "transaction_cost_bps": 5.0,
+    "annualised_return": 0.0835876713,
+    "annualised_volatility": 0.1393558824,
+    "sharpe_ratio": 0.5998144453,
+    "max_drawdown": -0.1596453110,
+    "avg_turnover": 0.1950796626
+  },
+  "equal_weight_baseline": {
+    "transaction_cost_bps": 5.0,
+    "annualised_return": 0.2236165329,
+    "annualised_volatility": 0.1314164529,
+    "sharpe_ratio": 1.7015870383,
+    "max_drawdown": -0.1282724162,
+    "avg_turnover": 0.0025773196
+  },
+  "differences_selected_minus_equal_weight": {
+    "annualised_return": -0.1400288616,
+    "sharpe_ratio": -1.1017725930,
+    "max_drawdown": -0.0313728948,
+    "avg_turnover": 0.1925023430
+  },
+  "regime_comparison": {
+    "plain_rank_ic": -0.1389315498,
+    "regime_rank_ic": -0.0609858806,
+    "plain_precision_at_3": 0.2461398728,
+    "regime_precision_at_3": 0.2833787466,
+    "plain_sharpe": 0.5998144453,
+    "regime_sharpe": 0.7423917208,
+    "plain_max_drawdown": -0.1596453110,
+    "regime_max_drawdown": -0.1497659097,
+    "plain_turnover": 0.1950796626,
+    "regime_turnover": 0.2285379569,
+    "paired_bootstrap_available": false,
+    "conclusion": "directionally improved, but robustness is unconfirmed because paired daily returns and bootstrap confidence intervals were not persisted"
+  },
+  "rejection_reasons": [
+    "selected strategy underperformed EqualWeight after identical 5 bps transaction-cost treatment",
+    "Sharpe ratio was materially lower than EqualWeight",
+    "maximum drawdown was worse than EqualWeight",
+    "turnover was materially higher than EqualWeight",
+    "regime-aware improvement lacked paired bootstrap confirmation"
+  ],
+  "next_action": "Start a new dated research run with a new selection cutoff; do not retune against this holdout."
+}

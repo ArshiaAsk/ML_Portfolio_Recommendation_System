@@ -1,0 +1,40 @@
+{
+  "phase": "3.3",
+  "selected_pre_holdout": true,
+  "holdout_status": "failed",
+  "production_ready": false,
+  "final_decision": "rejected_after_holdout",
+  "selection_cutoff": "2024-12-31",
+  "holdout_period": {
+    "start": "2025-01-02",
+    "end": "2026-07-22",
+    "n_trading_days": 388,
+    "locked": true,
+    "governance_note": "Do not retune against this holdout."
+  },
+  "selected_strategy": {
+    "model_name": "gradient_boost",
+    "params": {
+      "learning_rate": 0.03,
+      "max_depth": 6,
+      "max_iter": 300
+    },
+    "regime_status": "regime_aware",
+    "portfolio_method": "score_weighted",
+    "transaction_cost_bps": 5.0
+  },
+  "failed_acceptance_criteria": [
+    "Did not outperform EqualWeight after transaction costs",
+    "Sharpe ratio was materially below EqualWeight",
+    "Maximum drawdown was worse than EqualWeight",
+    "Turnover was materially higher than EqualWeight",
+    "Regime-aware improvement lacked paired bootstrap confirmation"
+  ],
+  "next_research_run": {
+    "status": "planned",
+    "run_id": "phase3_3_research_20260723",
+    "new_selection_cutoff": "2025-12-31",
+    "holdout_exclusion": "2025-01-02 through 2026-07-22 remains locked and excluded from tuning",
+    "action": "Start a new dated research run; do not alter this run's decisions using the failed holdout."
+  }
+}

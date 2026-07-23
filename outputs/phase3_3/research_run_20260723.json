@@ -1,0 +1,24 @@
+{
+  "run_id": "phase3_3_research_20260723",
+  "phase": "3.3",
+  "selection_cutoff": "2025-12-31",
+  "prior_run_reference": "phase3_3_research_20260723_holdout_2025_01_02_to_2026_07_22",
+  "governance_note": "The prior failed holdout remains locked. Do not retune against this holdout.",
+  "status": "pre_holdout_research",
+  "benchmark": "EqualWeight",
+  "transaction_cost_bps": 5.0,
+  "acceptance_criteria": {
+    "net_annualised_return_exceeds_equal_weight": true,
+    "net_sharpe_exceeds_equal_weight": true,
+    "max_drawdown_not_worse_than_equal_weight": true,
+    "turnover_not_excessive": true,
+    "regime_consistency_required": true,
+    "paired_bootstrap_evidence_required": true,
+    "holdout_is_confirmation_only": true
+  },
+  "prior_holdout": {
+    "period": "2025-01-02 to 2026-07-22",
+    "status": "locked",
+    "usable_for_tuning": false
+  }
+}
