@@ -1,0 +1,4 @@
+portfolio_method,total_return,annualised_return,annualised_volatility,sharpe_ratio,max_drawdown,avg_turnover,n_days,transaction_cost_bps,risk_control
+top_k_equal,0.0423745199367882,0.027321011793466354,0.14715005514568008,0.18566769660003368,-0.17613229395899588,0.35309278350515466,388,5.0,"{'volatility_scaled': False, 'sticky_fraction': 0.0, 'drawdown_threshold': None, 'drawdown_exposure': 1.0, 'turnover_penalty': 0.0}"
+score_weighted,0.13156518488599422,0.08358767131474076,0.1393558824226012,0.5998144453009774,-0.15964531100342172,0.19507966260543583,388,5.0,"{'volatility_scaled': False, 'sticky_fraction': 0.0, 'drawdown_threshold': None, 'drawdown_exposure': 1.0, 'turnover_penalty': 0.0}"
+mean_variance,0.1348001087247388,0.08559861535478452,0.10117874710590198,0.8460137904770652,-0.11899733632143272,0.34164351424902245,388,5.0,"{'volatility_scaled': False, 'sticky_fraction': 0.0, 'drawdown_threshold': None, 'drawdown_exposure': 1.0, 'turnover_penalty': 0.0}"
