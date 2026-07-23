@@ -30,7 +30,7 @@ def main():
                 "feature_date": str(latest_date.date()), "data_cutoff": str(prices.index.max().date()),
                 "model_type": config["model_name"], "model": config, "regime_status": config.get("regime_status", "plain"),
                 "portfolio_method": config["portfolio_method"], "disclaimer": "Not investment advice."}
-    validate_recommendation(recommendation, metadata)
+    validate_recommendation(recommendation, metadata, today=date.today())
     version = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     recommendation.to_csv(out / f"recommendation_{stamp}_{version}.csv", index=False)
     (out / f"recommendation_{stamp}_{version}.json").write_text(json.dumps({"metadata": metadata, "recommendation": recommendation.to_dict("records")}, indent=2))
