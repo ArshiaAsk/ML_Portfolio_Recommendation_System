@@ -259,3 +259,206 @@ def compare_to_equal_weight(
         block,
         n_resamples,
     )
+
+
+def thin_prediction_dates(
+    predictions: pd.DataFrame,
+    rebalance_every: int = 21,
+) -> pd.DataFrame:
+    """Keep every N-th unique prediction date to enforce practical rebalancing."""
+    if rebalance_every < 1:
+        raise ValueError("rebalance_every must be >= 1")
+    dates = sorted(predictions["date"].unique())
+    keep = set(dates[::rebalance_every])
+    return predictions[predictions["date"].isin(keep)].copy()
+
+
+def smooth_prediction_scores(
+    predictions: pd.DataFrame,
+    span: int | None,
+) -> pd.DataFrame:
+    """Optionally EMA-smooth scores by symbol to reduce day-to-day churn."""
+    if span is None or span <= 1:
+        return predictions.copy()
+
+    out = predictions.sort_values(["symbol", "date"]).copy()
+    out["predicted_score"] = out.groupby("symbol")["predicted_score"].transform(
+        lambda series: series.ewm(span=span, adjust=False).mean()
+    )
+    return out
+
+
+def _build_weight_schedule(
+    predictions: pd.DataFrame,
+    prices: pd.DataFrame,
+    *,
+    portfolio_method: str,
+    top_k: int,
+    max_weight: float,
+    transaction_cost_bps: float,
+    risk_control: RiskControlConfig,
+) -> dict[pd.Timestamp, np.ndarray]:
+    """Map prediction dates to portfolio weights with optional risk overlays."""
+    assets = list(prices.columns)
+    config = TwoStageConfig(
+        portfolio_method=portfolio_method,
+        top_k=top_k,
+        max_weight=max_weight,
+        transaction_cost_bps=transaction_cost_bps,
+        rebalance_frequency=21,
+    )
+    schedule: dict[pd.Timestamp, np.ndarray] = {}
+    previous: np.ndarray | None = None
+    previous_date: pd.Timestamp | None = None
+    peak_value = 1.0
+    portfolio_value = 1.0
+
+    for date, group in predictions.groupby("date", sort=True):
+        date_ts = pd.Timestamp(date)
+        drawdown = 0.0
+        if previous is not None and previous_date is not None:
+            # Approximate inter-rebalance return for drawdown overlays.
+            start_px = prices.loc[previous_date, assets].to_numpy(dtype=float)
+            end_px = prices.loc[date_ts, assets].to_numpy(dtype=float)
+            with np.errstate(divide="ignore", invalid="ignore"):
+                asset_ret = end_px / start_px - 1.0
+                asset_ret = np.nan_to_num(asset_ret, nan=0.0, posinf=0.0, neginf=0.0)
+            portfolio_value *= 1.0 + float(np.dot(previous, asset_ret))
+            peak_value = max(peak_value, portfolio_value)
+            drawdown = portfolio_value / peak_value - 1.0
+
+        scores = normalise_scores_cross_sectionally(
+            pd.Series(group["predicted_score"].to_numpy(), index=group["symbol"])
+        )
+        needs_history = (
+            portfolio_method == "mean_variance" or risk_control.volatility_scaled
+        )
+        history = (
+            prices.loc[:date_ts].pct_change().iloc[-config.cov_window :]
+            if needs_history
+            else None
+        )
+        weights = compute_weights_from_scores(scores, assets, config, history)
+        weights = _risk_adjust_weights(
+            weights,
+            history,
+            previous,
+            risk_control,
+            drawdown=drawdown,
+        )
+        schedule[date_ts] = weights
+        previous = weights
+        previous_date = date_ts
+
+    return schedule
+
+
+def evaluate_equal_weight(
+    prices: pd.DataFrame,
+    rebalance_dates: list[pd.Timestamp],
+    transaction_cost_bps: float = 5.0,
+) -> dict:
+    """Backtest an equal-weight schedule on the same rebalance calendar."""
+    if not rebalance_dates:
+        raise ValueError("rebalance_dates cannot be empty")
+
+    n_assets = prices.shape[1]
+    equal = np.ones(n_assets) / n_assets
+    schedule = {pd.Timestamp(date): equal.copy() for date in rebalance_dates}
+    aligned = prices.loc[min(schedule) :]
+    result = BacktestEngine(
+        aligned,
+        schedule,
+        transaction_cost=transaction_cost_bps / 10000,
+    ).run()
+    return {
+        "metrics": {
+            "portfolio_method": "equal_weight",
+            **result["metrics"],
+            "transaction_cost_bps": transaction_cost_bps,
+        },
+        "daily_returns": result["daily_returns"],
+        "portfolio_value": result["portfolio_value"],
+        "turnover": result["turnover"],
+    }
+
+
+def evaluate_strategy_candidate(
+    predictions: pd.DataFrame,
+    prices: pd.DataFrame,
+    *,
+    portfolio_method: str,
+    top_k: int = 5,
+    max_weight: float = 0.25,
+    transaction_cost_bps: float = 5.0,
+    risk_control: RiskControlConfig | None = None,
+    rebalance_every: int = 21,
+    score_ema_span: int | None = None,
+) -> dict:
+    """Evaluate one portfolio candidate and return metrics plus daily returns."""
+    control = risk_control or RiskControlConfig()
+    scored = smooth_prediction_scores(predictions, score_ema_span)
+    thinned = thin_prediction_dates(scored, rebalance_every=rebalance_every)
+    schedule = _build_weight_schedule(
+        thinned,
+        prices,
+        portfolio_method=portfolio_method,
+        top_k=top_k,
+        max_weight=max_weight,
+        transaction_cost_bps=transaction_cost_bps,
+        risk_control=control,
+    )
+    if not schedule:
+        raise ValueError("candidate produced an empty rebalance schedule")
+
+    aligned = prices.loc[min(schedule) :]
+    result = BacktestEngine(
+        aligned,
+        schedule,
+        transaction_cost=transaction_cost_bps / 10000,
+    ).run()
+
+    return {
+        "metrics": {
+            "portfolio_method": portfolio_method,
+            **result["metrics"],
+            "transaction_cost_bps": transaction_cost_bps,
+            "top_k": top_k,
+            "max_weight": max_weight,
+            "rebalance_every": rebalance_every,
+            "score_ema_span": score_ema_span,
+            "risk_control": control.__dict__,
+            "n_rebalances": len(schedule),
+        },
+        "daily_returns": result["daily_returns"],
+        "portfolio_value": result["portfolio_value"],
+        "turnover": result["turnover"],
+        "rebalance_dates": sorted(schedule.keys()),
+    }
+
+
+def slice_performance(
+    daily_returns: pd.Series,
+    *,
+    freq: str = "YE",
+) -> pd.DataFrame:
+    """Compute annualised return/Sharpe by calendar slice for stability checks."""
+    rows: list[dict] = []
+    grouped = daily_returns.groupby(pd.Grouper(freq=freq))
+    for period, returns in grouped:
+        if returns.empty or returns.notna().sum() < 5:
+            continue
+        total = float((1.0 + returns).prod() - 1.0)
+        n_years = len(returns) / 252.0
+        ann_ret = (1.0 + total) ** (1.0 / n_years) - 1.0 if n_years > 0 else 0.0
+        vol = float(returns.std(ddof=1) * np.sqrt(252)) if len(returns) > 1 else 0.0
+        sharpe = ann_ret / vol if vol > 1e-9 else 0.0
+        rows.append(
+            {
+                "period": str(pd.Timestamp(period).date()),
+                "n_days": int(len(returns)),
+                "annualised_return": float(ann_ret),
+                "sharpe_ratio": float(sharpe),
+            }
+        )
+    return pd.DataFrame(rows)
