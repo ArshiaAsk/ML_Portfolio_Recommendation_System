@@ -1,0 +1,224 @@
+{
+  "run_id": "phase3_3_research_20260725",
+  "status": "no_finalist",
+  "selection_cutoff": "2025-12-31",
+  "future_holdout_status": "not_opened",
+  "governance_note": "Do not retune against the prior failed holdout.",
+  "benchmark": "EqualWeight",
+  "transaction_cost_bps": 5.0,
+  "frozen_model": {
+    "model_name": "gradient_boost",
+    "params": {
+      "learning_rate": 0.03,
+      "max_depth": 6,
+      "max_iter": 300
+    }
+  },
+  "acceptance_criteria": {
+    "min_return_edge": 0.0,
+    "min_sharpe_edge": 0.0,
+    "max_drawdown_tolerance": 0.02,
+    "max_avg_turnover": 0.1,
+    "min_window_win_rate": 0.5,
+    "require_positive_bootstrap_diff": true,
+    "max_assets_for_top_k_equal": 10,
+    "governance_note": "Do not retune against the prior failed holdout. EqualWeight after costs is the decision benchmark."
+  },
+  "ranking_signal_summary": {
+    "rank_ic": 0.1428923380142892,
+    "rank_ic_std": 0.3973943683705683,
+    "precision_at_3": 0.35269066976384045,
+    "n_folds_or_dates": 1722
+  },
+  "n_candidates": 7,
+  "n_finalists": 0,
+  "n_keep": 7,
+  "n_reject": 0,
+  "decisions": [
+    {
+      "candidate_id": "B",
+      "decision": "keep_for_further_internal_validation",
+      "return_edge": 0.13394195343845894,
+      "sharpe_edge": 0.8558977146909451,
+      "drawdown_gap": 0.02860483097811284,
+      "avg_turnover": 0.5452961672473867,
+      "window_win_rate": 1.0,
+      "bootstrap_observed_diff": 0.7192792485325884,
+      "bootstrap_p_value": 0.486,
+      "checks": {
+        "return_exceeds_equal_weight": true,
+        "sharpe_exceeds_equal_weight": true,
+        "drawdown_within_tolerance": true,
+        "turnover_acceptable": false,
+        "window_stability": true,
+        "bootstrap_non_negative": true,
+        "not_trivial_equal_weight": true
+      },
+      "failures": [
+        "turnover_acceptable"
+      ]
+    },
+    {
+      "candidate_id": "D",
+      "decision": "keep_for_further_internal_validation",
+      "return_edge": 0.0697312293751624,
+      "sharpe_edge": 0.4334496211473394,
+      "drawdown_gap": 0.009997283222412667,
+      "avg_turnover": 0.276222256392289,
+      "window_win_rate": 1.0,
+      "bootstrap_observed_diff": 0.37449438247444633,
+      "bootstrap_p_value": 0.497,
+      "checks": {
+        "return_exceeds_equal_weight": true,
+        "sharpe_exceeds_equal_weight": true,
+        "drawdown_within_tolerance": true,
+        "turnover_acceptable": false,
+        "window_stability": true,
+        "bootstrap_non_negative": true,
+        "not_trivial_equal_weight": true
+      },
+      "failures": [
+        "turnover_acceptable"
+      ]
+    },
+    {
+      "candidate_id": "A",
+      "decision": "keep_for_further_internal_validation",
+      "return_edge": 0.2142198547237828,
+      "sharpe_edge": 1.4201170841413933,
+      "drawdown_gap": 0.05730128922568378,
+      "avg_turnover": 0.9292682926829269,
+      "window_win_rate": 1.0,
+      "bootstrap_observed_diff": 1.1563622693234197,
+      "bootstrap_p_value": 0.464,
+      "checks": {
+        "return_exceeds_equal_weight": true,
+        "sharpe_exceeds_equal_weight": true,
+        "drawdown_within_tolerance": true,
+        "turnover_acceptable": false,
+        "window_stability": true,
+        "bootstrap_non_negative": true,
+        "not_trivial_equal_weight": true
+      },
+      "failures": [
+        "turnover_acceptable"
+      ]
+    },
+    {
+      "candidate_id": "C",
+      "decision": "keep_for_further_internal_validation",
+      "return_edge": 0.06811673274114782,
+      "sharpe_edge": 0.44310963649650004,
+      "drawdown_gap": 0.014520008790186556,
+      "avg_turnover": 0.23539654537264956,
+      "window_win_rate": 1.0,
+      "bootstrap_observed_diff": 0.38298176680704266,
+      "bootstrap_p_value": 0.481,
+      "checks": {
+        "return_exceeds_equal_weight": true,
+        "sharpe_exceeds_equal_weight": true,
+        "drawdown_within_tolerance": true,
+        "turnover_acceptable": false,
+        "window_stability": true,
+        "bootstrap_non_negative": true,
+        "not_trivial_equal_weight": true
+      },
+      "failures": [
+        "turnover_acceptable"
+      ]
+    },
+    {
+      "candidate_id": "E",
+      "decision": "keep_for_further_internal_validation",
+      "return_edge": 0.12986181504931205,
+      "sharpe_edge": 0.9317732710425574,
+      "drawdown_gap": 0.038650302992631724,
+      "avg_turnover": 0.5994054417924352,
+      "window_win_rate": 1.0,
+      "bootstrap_observed_diff": 0.7850538855376402,
+      "bootstrap_p_value": 0.469,
+      "checks": {
+        "return_exceeds_equal_weight": true,
+        "sharpe_exceeds_equal_weight": true,
+        "drawdown_within_tolerance": true,
+        "turnover_acceptable": false,
+        "window_stability": true,
+        "bootstrap_non_negative": true,
+        "not_trivial_equal_weight": true
+      },
+      "failures": [
+        "turnover_acceptable"
+      ]
+    },
+    {
+      "candidate_id": "F",
+      "decision": "keep_for_further_internal_validation",
+      "return_edge": 0.02634690316550703,
+      "sharpe_edge": 0.0958381504561836,
+      "drawdown_gap": -0.021791245719287144,
+      "avg_turnover": 0.13387885650183093,
+      "window_win_rate": 0.7142857142857143,
+      "bootstrap_observed_diff": 0.08651386884800127,
+      "bootstrap_p_value": 0.514,
+      "checks": {
+        "return_exceeds_equal_weight": true,
+        "sharpe_exceeds_equal_weight": true,
+        "drawdown_within_tolerance": false,
+        "turnover_acceptable": false,
+        "window_stability": true,
+        "bootstrap_non_negative": true,
+        "not_trivial_equal_weight": true
+      },
+      "failures": [
+        "drawdown_within_tolerance",
+        "turnover_acceptable"
+      ]
+    },
+    {
+      "candidate_id": "G",
+      "decision": "keep_for_further_internal_validation",
+      "return_edge": 0.06797255410050007,
+      "sharpe_edge": 0.42815310958416275,
+      "drawdown_gap": 0.009997283222412667,
+      "avg_turnover": 0.2733593671363892,
+      "window_win_rate": 1.0,
+      "bootstrap_observed_diff": 0.3701689679485277,
+      "bootstrap_p_value": 0.497,
+      "checks": {
+        "return_exceeds_equal_weight": true,
+        "sharpe_exceeds_equal_weight": true,
+        "drawdown_within_tolerance": true,
+        "turnover_acceptable": false,
+        "window_stability": true,
+        "bootstrap_non_negative": true,
+        "not_trivial_equal_weight": true
+      },
+      "failures": [
+        "turnover_acceptable"
+      ]
+    }
+  ],
+  "selected_finalist": null,
+  "recommended_try_order": [
+    "B",
+    "D",
+    "A",
+    "C",
+    "E",
+    "F",
+    "G"
+  ],
+  "artifacts": {
+    "metadata": "outputs/phase3_3/research_run_20260725.json",
+    "candidate_results": "outputs/phase3_3/research_candidate_results_phase3_3_research_20260725.csv",
+    "window_stability": "outputs/phase3_3/research_window_stability_phase3_3_research_20260725.csv"
+  },
+  "holdout_checklist": [
+    "Confirm finalist config is frozen and hashed in metadata",
+    "Evaluate once on 2026-01-02 through latest available date",
+    "Require net outperformance vs EqualWeight after 5 bps costs",
+    "Require Sharpe edge and drawdown within tolerance",
+    "Require realistic turnover and persisted paired bootstrap",
+    "If holdout fails: reject run; do not retune against holdout"
+  ]
+}

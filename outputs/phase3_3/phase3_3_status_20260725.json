@@ -1,0 +1,23 @@
+{
+  "phase": "3.3",
+  "as_of": "2026-07-25",
+  "production_ready": false,
+  "active_research_run": "phase3_3_research_20260725",
+  "active_research_status": "no_finalist",
+  "prior_holdout_confirmation": {
+    "run_reference": "holdout_confirmation_20260723",
+    "selection_cutoff": "2024-12-31",
+    "holdout_period": "2025-01-02 to 2026-07-22",
+    "status": "failed_and_locked",
+    "governance_note": "Do not retune against this holdout."
+  },
+  "new_research_run": {
+    "run_id": "phase3_3_research_20260725",
+    "selection_cutoff": "2025-12-31",
+    "future_holdout": "2026-01-02 to 2026-07-22",
+    "status": "no_finalist",
+    "holdout_opened": false,
+    "reason": "All compact candidates beat EqualWeight on pre-holdout return/Sharpe point estimates but failed the pre-declared turnover gate."
+  },
+  "next_action": "Do not open holdout. Either start a follow-on dated run focused on membership hysteresis / longer rebalance / stronger sticky controls, or formally reject Phase 3.3 production readiness."
+}
