@@ -23,13 +23,37 @@ from portfolio_ml.modeling.two_stage_portfolio import (
 
 @dataclass(frozen=True)
 class RiskControlConfig:
-    """Optional controls evaluated without changing the base pipeline."""
+    """Optional controls evaluated without changing the base pipeline.
+
+    Turnover controls (Cycle 3)
+    ---------------------------
+    ``entry_buffer`` / ``exit_buffer`` implement membership hysteresis on
+    percentile-normalised scores in [0, 1]. An incumbent holding is retained
+    until its score falls ``exit_buffer`` below the top-k cutoff; a challenger
+    only enters when its score exceeds the cutoff by ``entry_buffer``. This
+    targets the dominant turnover term: a single membership swap in a top-k
+    equal-weight book costs ``2/k`` turnover regardless of signal quality.
+
+    ``turnover_penalty`` adds an explicit L1 trade-cost term to the
+    mean-variance objective, so the optimiser trades off score edge against
+    distance from the current book instead of re-solving from scratch.
+    """
 
     volatility_scaled: bool = False
     sticky_fraction: float = 0.0
     drawdown_threshold: float | None = None
     drawdown_exposure: float = 1.0
     turnover_penalty: float = 0.0
+    entry_buffer: float = 0.0
+    exit_buffer: float = 0.0
+
+    def __post_init__(self) -> None:
+        if not 0.0 <= self.sticky_fraction <= 1.0:
+            raise ValueError("sticky_fraction must be in [0, 1]")
+        if self.entry_buffer < 0.0 or self.exit_buffer < 0.0:
+            raise ValueError("entry_buffer and exit_buffer must be >= 0")
+        if self.turnover_penalty < 0.0:
+            raise ValueError("turnover_penalty must be >= 0")
 
 
 def _feature_columns(frame: pd.DataFrame, horizon: int) -> list[str]:
@@ -143,6 +167,121 @@ def ranking_metrics(
     }
 
 
+def apply_membership_hysteresis(
+    scores: pd.Series,
+    assets: list[str],
+    previous_weights: np.ndarray | None,
+    top_k: int,
+    entry_buffer: float,
+    exit_buffer: float,
+) -> pd.Series:
+    """Stabilise top-k membership using entry/exit score buffers.
+
+    Membership churn, not weight drift, dominates turnover in a top-k book:
+    each swap costs ``2/k``. Hysteresis keeps an incumbent until it decays
+    ``exit_buffer`` below the cutoff and admits a challenger only when it
+    clears the cutoff by ``entry_buffer``, so marginal rank noise near the
+    boundary no longer forces a trade.
+
+    Scores are percentile ranks in [0, 1], so buffers are expressed in
+    percentile units and are directly comparable across dates.
+
+    Args:
+        scores: Normalised scores in [0, 1] indexed by symbol.
+        assets: Ordered asset universe defining weight-vector positions.
+        previous_weights: Prior weight vector aligned to ``assets``; ``None``
+            on the first rebalance (no incumbents, so plain top-k applies).
+        top_k: Target number of holdings.
+        entry_buffer: Extra score a non-holding must clear to enter.
+        exit_buffer: Score shortfall tolerated before an incumbent is dropped.
+
+    Returns:
+        Score series where retained/admitted names keep their score and all
+        others are set to ``-inf``, so downstream weighting selects exactly
+        the hysteresis-approved set.
+    """
+    aligned = scores.reindex(assets).fillna(0.0)
+    k = min(top_k, len(assets))
+
+    # Finite sentinel below the [0, 1] score range. Using -inf would break the
+    # mean-variance range normalisation downstream.
+    excluded_score = -1.0
+
+    if previous_weights is None or (entry_buffer <= 0.0 and exit_buffer <= 0.0):
+        # No incumbents, or hysteresis disabled: plain top-k.
+        keep = set(aligned.nlargest(k).index)
+        return pd.Series(
+            [aligned[a] if a in keep else excluded_score for a in assets],
+            index=assets,
+        )
+
+    held = {asset for asset, weight in zip(assets, previous_weights) if weight > 1e-9}
+    ranked = aligned.sort_values(ascending=False)
+    # Cutoff is the k-th best score this date: the level a name must clear.
+    cutoff = float(ranked.iloc[k - 1]) if len(ranked) >= k else float(ranked.iloc[-1])
+
+    retained = [a for a in assets if a in held and aligned[a] >= cutoff - exit_buffer]
+    challengers = [
+        a
+        for a in assets
+        if a not in held and aligned[a] >= cutoff + entry_buffer
+    ]
+
+    selected = list(retained)
+    if len(selected) > k:
+        # Over capacity: keep the strongest incumbents.
+        selected = list(aligned[selected].nlargest(k).index)
+    elif len(selected) < k:
+        # Fill remaining slots with the strongest qualifying challengers, then
+        # fall back to plain ranking so the book is never under-invested.
+        room = k - len(selected)
+        ordered_challengers = list(aligned[challengers].nlargest(room).index)
+        selected.extend(ordered_challengers)
+        if len(selected) < k:
+            filler = [a for a in ranked.index if a not in selected]
+            selected.extend(filler[: k - len(selected)])
+
+    keep = set(selected)
+    return pd.Series(
+        [aligned[a] if a in keep else excluded_score for a in assets],
+        index=assets,
+    )
+
+
+def _apply_turnover_penalty(
+    weights: np.ndarray,
+    previous: np.ndarray | None,
+    penalty: float,
+) -> np.ndarray:
+    """Suppress sub-threshold trades via a no-trade band (soft-thresholding).
+
+    Solving ``min ||w - w_target||^2 + penalty * ||w - w_prev||_1`` gives, for a
+    fixed target, the soft-thresholded trade vector: per-asset trades smaller
+    than ``penalty`` do not repay their cost and are dropped, while larger
+    trades execute net of the threshold.
+
+    This is deliberately *not* proportional shrinkage — scaling every trade by
+    ``(1 - penalty)`` is algebraically identical to ``sticky_fraction`` and
+    would add no new control. A no-trade band instead filters which trades
+    happen at all, which is what removes the small rank-noise rebalances that
+    accumulate turnover.
+
+    ``penalty`` is therefore in absolute weight units: 0.02 means "ignore any
+    trade smaller than 2% of the book". Values approaching typical weight size
+    (``1/k``) freeze the portfolio, so keep it well below that.
+    """
+    if previous is None or penalty <= 0.0:
+        return weights
+
+    trade = weights - previous
+    shrunk = np.sign(trade) * np.maximum(np.abs(trade) - penalty, 0.0)
+    adjusted = np.clip(previous + shrunk, 0.0, None)
+    total = adjusted.sum()
+    if total < 1e-12:
+        return weights
+    return adjusted / total
+
+
 def _risk_adjust_weights(
     weights: np.ndarray,
     returns_history: pd.DataFrame | None,
@@ -174,6 +313,12 @@ def _risk_adjust_weights(
     ):
         adjusted *= control.drawdown_exposure
         adjusted = adjusted + (1.0 - adjusted.sum()) / len(adjusted)
+
+    # Normalise before the penalty so soft-thresholding compares like with like.
+    total = max(adjusted.sum(), 1e-12)
+    adjusted = np.clip(adjusted, 0.0, None) / total
+
+    adjusted = _apply_turnover_penalty(adjusted, previous, control.turnover_penalty)
 
     total = max(adjusted.sum(), 1e-12)
     return np.clip(adjusted, 0.0, None) / total
@@ -330,6 +475,18 @@ def _build_weight_schedule(
         scores = normalise_scores_cross_sectionally(
             pd.Series(group["predicted_score"].to_numpy(), index=group["symbol"])
         )
+
+        # Apply hysteresis before portfolio allocation to stabilise membership.
+        if risk_control.entry_buffer > 0.0 or risk_control.exit_buffer > 0.0:
+            scores = apply_membership_hysteresis(
+                scores,
+                assets,
+                previous,
+                config.top_k,
+                risk_control.entry_buffer,
+                risk_control.exit_buffer,
+            )
+
         needs_history = (
             portfolio_method == "mean_variance" or risk_control.volatility_scaled
         )
