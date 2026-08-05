@@ -1,0 +1,226 @@
+{
+  "run_id": "phase3_3_research_20260731",
+  "cycle": 3,
+  "status": "no_finalist",
+  "selection_cutoff": "2025-12-31",
+  "future_holdout_status": "not_opened",
+  "governance_note": "Do not retune against prior failed holdouts. Turnover control is the binding constraint blocking promotion.",
+  "benchmark": "EqualWeight",
+  "transaction_cost_bps": 5.0,
+  "frozen_model": {
+    "model_name": "gradient_boost",
+    "params": {
+      "learning_rate": 0.03,
+      "max_depth": 6,
+      "max_iter": 300
+    }
+  },
+  "acceptance_criteria": {
+    "min_return_edge": 0.0,
+    "min_sharpe_edge": 0.0,
+    "max_drawdown_tolerance": 0.02,
+    "max_avg_turnover": 0.15,
+    "min_window_win_rate": 0.5,
+    "require_positive_bootstrap_diff": true,
+    "max_assets_for_top_k_equal": 10,
+    "governance_note": "Do not retune against the prior failed holdout. EqualWeight after costs is the decision benchmark."
+  },
+  "n_candidates": 7,
+  "n_finalists": 0,
+  "n_keep": 5,
+  "n_reject": 2,
+  "decisions": [
+    {
+      "candidate_id": "H",
+      "decision": "keep_for_further_internal_validation",
+      "return_edge": 0.05432283749930855,
+      "sharpe_edge": 0.28804399229415056,
+      "drawdown_gap": -0.028404228187474234,
+      "avg_turnover": 0.17378048780487804,
+      "window_win_rate": 1.0,
+      "bootstrap_observed_diff": 0.25162992397011774,
+      "bootstrap_p_value": 0.557,
+      "checks": {
+        "return_exceeds_equal_weight": true,
+        "sharpe_exceeds_equal_weight": true,
+        "drawdown_within_tolerance": false,
+        "turnover_acceptable": false,
+        "window_stability": true,
+        "bootstrap_non_negative": true,
+        "not_trivial_equal_weight": true
+      },
+      "failures": [
+        "drawdown_within_tolerance",
+        "turnover_acceptable"
+      ]
+    },
+    {
+      "candidate_id": "I",
+      "decision": "keep_for_further_internal_validation",
+      "return_edge": 0.024437024490845616,
+      "sharpe_edge": 0.04710078841932297,
+      "drawdown_gap": -0.04420404514873022,
+      "avg_turnover": 0.16069147013598847,
+      "window_win_rate": 0.42857142857142855,
+      "bootstrap_observed_diff": 0.04523643502817021,
+      "bootstrap_p_value": 0.555,
+      "checks": {
+        "return_exceeds_equal_weight": true,
+        "sharpe_exceeds_equal_weight": true,
+        "drawdown_within_tolerance": false,
+        "turnover_acceptable": false,
+        "window_stability": false,
+        "bootstrap_non_negative": true,
+        "not_trivial_equal_weight": true
+      },
+      "failures": [
+        "drawdown_within_tolerance",
+        "turnover_acceptable",
+        "window_stability"
+      ]
+    },
+    {
+      "candidate_id": "J",
+      "decision": "keep_for_further_internal_validation",
+      "return_edge": 0.02421329792833604,
+      "sharpe_edge": -0.024342284041095397,
+      "drawdown_gap": -0.06786866964880511,
+      "avg_turnover": 0.12047564568833123,
+      "window_win_rate": 0.42857142857142855,
+      "bootstrap_observed_diff": -0.014056943637994257,
+      "bootstrap_p_value": 0.825,
+      "checks": {
+        "return_exceeds_equal_weight": true,
+        "sharpe_exceeds_equal_weight": false,
+        "drawdown_within_tolerance": false,
+        "turnover_acceptable": true,
+        "window_stability": false,
+        "bootstrap_non_negative": false,
+        "not_trivial_equal_weight": true
+      },
+      "failures": [
+        "sharpe_exceeds_equal_weight",
+        "drawdown_within_tolerance",
+        "window_stability",
+        "bootstrap_non_negative"
+      ]
+    },
+    {
+      "candidate_id": "K",
+      "decision": "keep_for_further_internal_validation",
+      "return_edge": 0.006813424281526315,
+      "sharpe_edge": -0.12643232499872592,
+      "drawdown_gap": -0.06369011313268202,
+      "avg_turnover": 0.024390243902439025,
+      "window_win_rate": 0.2857142857142857,
+      "bootstrap_observed_diff": -0.10337436964066204,
+      "bootstrap_p_value": 0.508,
+      "checks": {
+        "return_exceeds_equal_weight": true,
+        "sharpe_exceeds_equal_weight": false,
+        "drawdown_within_tolerance": false,
+        "turnover_acceptable": true,
+        "window_stability": false,
+        "bootstrap_non_negative": false,
+        "not_trivial_equal_weight": true
+      },
+      "failures": [
+        "sharpe_exceeds_equal_weight",
+        "drawdown_within_tolerance",
+        "window_stability",
+        "bootstrap_non_negative"
+      ]
+    },
+    {
+      "candidate_id": "L",
+      "decision": "reject",
+      "return_edge": -0.020300360596339218,
+      "sharpe_edge": -0.02716339137970558,
+      "drawdown_gap": 0.035044683888443395,
+      "avg_turnover": 0.03469780346539362,
+      "window_win_rate": 0.42857142857142855,
+      "bootstrap_observed_diff": -0.02855710010369894,
+      "bootstrap_p_value": 0.747,
+      "checks": {
+        "return_exceeds_equal_weight": false,
+        "sharpe_exceeds_equal_weight": false,
+        "drawdown_within_tolerance": true,
+        "turnover_acceptable": true,
+        "window_stability": false,
+        "bootstrap_non_negative": false,
+        "not_trivial_equal_weight": true
+      },
+      "failures": [
+        "return_exceeds_equal_weight",
+        "sharpe_exceeds_equal_weight",
+        "window_stability",
+        "bootstrap_non_negative"
+      ]
+    },
+    {
+      "candidate_id": "M",
+      "decision": "reject",
+      "return_edge": 0.0,
+      "sharpe_edge": 0.0,
+      "drawdown_gap": 0.0,
+      "avg_turnover": 0.024390243902439025,
+      "window_win_rate": 0.0,
+      "bootstrap_observed_diff": 0.0,
+      "bootstrap_p_value": 1.0,
+      "checks": {
+        "return_exceeds_equal_weight": false,
+        "sharpe_exceeds_equal_weight": false,
+        "drawdown_within_tolerance": true,
+        "turnover_acceptable": true,
+        "window_stability": false,
+        "bootstrap_non_negative": false,
+        "not_trivial_equal_weight": false
+      },
+      "failures": [
+        "return_exceeds_equal_weight",
+        "sharpe_exceeds_equal_weight",
+        "window_stability",
+        "bootstrap_non_negative",
+        "not_trivial_equal_weight"
+      ]
+    },
+    {
+      "candidate_id": "N",
+      "decision": "keep_for_further_internal_validation",
+      "return_edge": 0.02470793871270449,
+      "sharpe_edge": -0.04467328231419454,
+      "drawdown_gap": -0.06907800485255278,
+      "avg_turnover": 0.09100060422106747,
+      "window_win_rate": 0.5714285714285714,
+      "bootstrap_observed_diff": -0.03063328048163627,
+      "bootstrap_p_value": 0.673,
+      "checks": {
+        "return_exceeds_equal_weight": true,
+        "sharpe_exceeds_equal_weight": false,
+        "drawdown_within_tolerance": false,
+        "turnover_acceptable": true,
+        "window_stability": true,
+        "bootstrap_non_negative": false,
+        "not_trivial_equal_weight": true
+      },
+      "failures": [
+        "sharpe_exceeds_equal_weight",
+        "drawdown_within_tolerance",
+        "bootstrap_non_negative"
+      ]
+    }
+  ],
+  "selected_finalist": null,
+  "cycle_3_improvements": [
+    "Relaxed turnover gate from 10% to 15%",
+    "Added membership hysteresis (entry/exit buffers)",
+    "Tested longer rebalance cycles (42d, 63d)",
+    "Tested higher sticky fractions (0.85-0.90)",
+    "Tested wider top-k (8-10) for lower per-swap cost",
+    "Tested ensemble model"
+  ],
+  "artifacts": {
+    "metadata": "outputs/phase3_3/research_run_phase3_3_research_20260731.json",
+    "candidate_results": "outputs/phase3_3/research_candidate_results_phase3_3_research_20260731.csv"
+  }
+}

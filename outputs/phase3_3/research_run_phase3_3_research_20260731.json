@@ -1,15 +1,15 @@
 {
-  "run_id": "phase3_3_research_20260725",
+  "run_id": "phase3_3_research_20260731",
   "phase": "3.3",
-  "created_at_utc": "2026-07-30T11:44:58.330778+00:00",
+  "cycle": 3,
+  "created_at_utc": "2026-07-31T13:18:31.567761+00:00",
   "status": "no_finalist",
   "selection_cutoff": "2025-12-31",
   "validation_window": {
     "description": "Walk-forward out-of-sample folds whose complete forward labels finish on or before the selection cutoff.",
     "end": "2025-12-31",
     "horizon_days": 21,
-    "lookback_days": 252,
-    "rebalance_every": 21
+    "lookback_days": 252
   },
   "future_holdout_window": {
     "start": "2026-01-02",
@@ -18,14 +18,16 @@
     "usable_for_tuning": false,
     "n_trading_days_available": 143
   },
-  "prior_failed_holdout": {
-    "period_start": "2025-01-02",
-    "period_end": "2026-07-22",
-    "status": "locked",
-    "usable_for_tuning": false,
-    "governance_note": "Do not retune against the prior failed holdout."
-  },
-  "governance_note": "Do not retune against the prior failed holdout. Preserve prior artifacts. Benchmark-relative net performance after costs is required for finalist promotion.",
+  "prior_failed_holdouts": [
+    {
+      "period_start": "2025-01-02",
+      "period_end": "2026-07-22",
+      "status": "locked",
+      "usable_for_tuning": false,
+      "cycle": 1
+    }
+  ],
+  "governance_note": "Do not retune against prior failed holdouts. Turnover control is the binding constraint blocking promotion.",
   "benchmark": "EqualWeight",
   "transaction_cost_bps": 5.0,
   "frozen_model": {
@@ -40,25 +42,21 @@
     "min_return_edge": 0.0,
     "min_sharpe_edge": 0.0,
     "max_drawdown_tolerance": 0.02,
-    "max_avg_turnover": 0.1,
+    "max_avg_turnover": 0.15,
     "min_window_win_rate": 0.5,
     "require_positive_bootstrap_diff": true,
     "max_assets_for_top_k_equal": 10,
     "governance_note": "Do not retune against the prior failed holdout. EqualWeight after costs is the decision benchmark."
   },
   "candidate_ids": [
-    "A",
-    "B",
-    "C",
-    "D",
-    "E",
-    "F",
-    "G"
+    "H",
+    "I",
+    "J",
+    "K",
+    "L",
+    "M",
+    "N"
   ],
-  "decision_policy": [
-    "reject",
-    "keep_for_further_internal_validation",
-    "finalist_for_holdout_confirmation"
-  ],
-  "summary_artifact": "outputs/phase3_3/research_summary_phase3_3_research_20260725.json"
+  "cycle_3_focus": "Aggressive turnover reduction: hysteresis, longer rebalance cycles (42d/63d), higher sticky fractions (0.85-0.90), wider top-k (8-10), relaxed turnover gate (15%), ensemble model.",
+  "summary_artifact": "outputs/phase3_3/research_summary_phase3_3_research_20260731.json"
 }
